@@ -1,0 +1,45 @@
+name: Build and Deploy
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            # Checks out site including the theme submodule
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+                  fetch-depth: 0
+
+            # Install Hugo
+            - name: Install Hugo
+              uses: peaceiris/actions-hugo@v3
+              with:
+                  hugo-version: "0.161.1"
+                  extended: true
+
+            # Build the site into public/
+            - name: Build
+              run: hugo --minify
+
+            # Add deploy key to SSH agent
+            - name: Setup SSH
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy-key
+                  chmod 600 ~/.ssh/deploy-key
+                  ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+            # Copy built site to EC2
+            - name: Deploy
+              run: |
+                  rsync -avz --delete \
+                    -e "ssh -i ~/.ssh/deploy-key -o StrictHostKeyChecking=no" \
+                    public/ \
+                    ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_TARGET_DIR }}/
