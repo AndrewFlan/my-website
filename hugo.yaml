@@ -12,18 +12,18 @@ languages:
     languageName: "English"
     weight: 1
     contentDir: "content"
-    # menu:
-    #   main:
-    #     - identifier: blog
-    #       name: Blog
-    #       title: Blog posts
-    #       url: /blogs
-    #       weight: 1
-    #     - identifier: gallery
-    #       name: Gallery
-    #       title: Image gallery
-    #       url: /gallery
-    #       weight: 2
+    menu:
+      main:
+        # - identifier: blog
+        #   name: Blog
+        #   title: Blog posts
+        #   url: /blogs
+        #   weight: 1
+        - identifier: website-project
+          name: Website Project
+          title: Website Project Details
+          url: /website-project
+          weight: 1
 
 outputs:
   home:
@@ -182,13 +182,15 @@ params:
       I've spent most of my career working across the full infrastructure stack, from server administration to managing large-scale Kubernetes environments and cloud migrations.
     skills:
       enable: true
-      title: "Here are a few technologies I've worked with recently:"
+      title: "Here are a few of my skills:"
       items:
         - "Kubernetes"
-        - "Pythom"
         - "AWS"
+        - "IaC"
+        - "CI/CD"
         - "Terraform"
         - "Ansible"
+        - "Python"
         - "Ruby on Rails"
 
   # Experience
@@ -201,24 +203,20 @@ params:
         jobs:
           - name: "Senior Site Reliability Engineer"
             date: "Aug 2024 - March 2026"
-            content: "I worked as a Senior Site Reliability Engineer at Oracle in their Healthcare Business Unit."
-            # info:
-            #   content: Working as a Senior Site Reliability Engineer
-            # featuredItems:
-            #   fontAwesomeIcons:
-            #     - icon: fa-brands fa-react
-            #       url: https://react.dev/
-            #       tooltip: Example tooltip content
-            #     - icon: fab fa-x-twitter
-            #       url: https://example.com
-            #       # tooltip: Example tooltip content
-            #   customIcons:
-            #     - icon: /fav.png
-            #       url: "https://example.com"
-            #       tooltip: Example tooltip content
+            content: |
+              - Contributed to and helped drive Kubernetes migration efforts from AWS to OCI, including cluster provisioning, configuration, management and observability.
+              - Managed Kubernetes cluster lifecycle across Dev, Non-Prod, and Production environments, overseeing clusters ranging from small-scale to 250+ worker nodes, ensuring clusters remained current, stable, and compliant with Oracle security standards.
+              - Utilized Terraform to deploy, configure, and maintain cloud infrastructure including Kubernetes clusters, MySQL instances, and Redis instances on OCI.
+              - Maintained and debugged Spinnaker CI/CD pipelines, resolving pipeline failures and updating configurations to support application deployments across Kubernetes clusters.
+              - Served as the primary point of contact for internal development teams, providing troubleshooting assistance and owning the end-to-end change management and deployment process for application releases.
           - name: "Site Reliability Engineer II"
             date: "Oct 2022 - Aug 2024"
-            content: "I worked as a Site Reliability Engineer II at Oracle in their Healthcare Business Unit."
+            content: |
+              - Developed and maintained Python automation pipelines for onboarding tasks and multi-product deployments.
+              - Built and maintained a Ruby on Rails application enabling end-users to auto-generate Jira tickets, reducing manual overhead.
+              - Managed operations, deployments, and monitoring for multiple products running on AWS EKS clusters.
+              - Wrote Python scripts to extract and process data from MySQL databases for operational reporting.
+              - Developed and maintained Power BI dashboards to visualize project tracking metrics.
 
       - company: "Cerner Corporation"
         companyUrl: "https://www.oracle.com/corporate/acquisitions/cerner/"
@@ -226,16 +224,24 @@ params:
           - name: "Site Reliability Engineer"
             date: "May 2022 - Oct 2022"
             content: |
-              I worked as a Site Reliability Engineer at Cerner Corporation.
-
-              - Lead backend developer for a product.
-              - Created a frontend design for a product.
+              - Built, managed, and maintained multiple Kubernetes clusters on Oracle Linux VMs.
+              - Configured application-level monitoring and alerting with New Relic and Splunk across Kubernetes environments.
+              - Contributed new features and UI improvements to an internal automation tool within the React framework.
           - name: "System Engineer II"
             date: "Oct 2019 - May 2022"
-            content: I worked as a System Engineer II at Cerner Corporation."
+            content: |
+              - Delivered ongoing system implementation, support, monitoring, and maintenance of Cerner's Remote Hosted solutions and infrastructure for hospital systems.
+              - Served as the Subject Matter Expert for IBM WebSphere, providing Tier 3 on-call support for WebSphere enterprise applications across Cerner's client base.
+              - Developed PowerShell scripts to automate log collection and centralization, streamlining the troubleshooting process for the team.
+              - Created documentation and training materials for a new cloud-based application support model, enabling client teams to manage environments more independently and reduce troubleshooting resolution time.
           - name: "System Engineer"
             date: "Jul 2017 - Oct 2019"
-            content: I worked as a System Engineer at Cerner Corporation."
+            content: |
+              - Provided system implementation, support, monitoring, and maintenance of Cerner’s Remote Hosted solutions, services, and infrastructure for hospital systems.
+              - Led client adoption, planning, and change management for major Cerner EHR Platform upgrades, ensuring smooth transitions across hospital system environments.
+              - Carried out code deployments, tech stack upgrades, infrastructure refreshes, and assisted in piloting new technologies and processes.
+              - Administered RHEL/Oracle Linux and Windows Server 2008/2012/2016/2019 environments as well as integrating third-party solutions including IBM Websphere, Citrix XenApp, SQL Server, SAP Business Objects and Kofax Document Imaging.
+              - Developed deep expertise across multiple solutions, serving as the team's primary resource for troubleshooting and technical assistance.
 
   # Education
   education:
@@ -251,29 +257,8 @@ params:
         GPA: "3.5 out of 4.0"
         content: |-
           Major: Information Technology
-          Minor: Computer Science
 
-  # # Achievements
-  # achievements:
-  #   enable: true
-  #   # title: "Custom Name"
-  #   items:
-  #     - title: Google kickstart runner
-  #       content: I solved all problems with optimal solution.
-  #       url: https://example.com
-  #       image: /images/achievement.jpg
-  #     - title: Facebook Hackathon Winner
-  #       content: Developed a product using Artificial Intelligence.
-  #       image: /images/achievement.jpg
-  #     - title: Hugo Profile
-  #       content: Developed a theme and getting 1K+ downloads per month.
-  #       url: "https://github.com/gurusabarish/hugo-profile"
-  #       image: /images/achievement.jpg
-  #     - title: Microsoft Imagine Runner
-  #       content: We are developed a product which can help others.
-  #     - title: Google Summer of Code
-  #       content: Contributed to a open source project.
-  #       url: https://example.com
+          Minor: Computer Science
 
   # projects
   projects:
@@ -285,16 +270,20 @@ params:
         image: /images/projects/profile2.jpg
 
         featured:
-          name: Demo
-          link: https://andrewflanigan.com
+          name: About
+          link: /website-project
         badges:
-          - "AWS"
-          - "Terraform"
-          - "Ansible"
-          - "CI/CD"
+          - DevOps
+          - AWS
+          - IaC
+          - CI/CD
+          - Terraform
+          - Ansible
+          - Github Actions
+          - Automation
         links:
           - icon: fab fa-github
-            url: https://github.com/gurusabarish/hugo-profile
+            url: https://github.com/AndrewFlan
 
   #Contact
   contact:
@@ -303,20 +292,8 @@ params:
     content: You can reach out to me via Linkedin, I’ll try my best to get back to you!
     btnName: Linkedin
     btnLink: https://www.linkedin.com/in/andrew-flanigan/
-    # formspree:
-    #   enable: true # `contact.email` value will be ignored
-    #   formId: abcdefgh # Take it from your form's endpoint, like 'https://formspree.io/f/abcdefgh'
-    #   emailCaption: "Enter your email address"
-    #   messageCaption: "Enter your message here"
-    #   messageRows: 5
 
   footer:
-    # recentPosts:
-    #   path: "blogs"
-    #   count: 3
-    #   title: Recent Posts
-    #   enable: true
-    #   disableFeaturedImage: false
     socialNetworks:
       github: https://github.com/AndrewFlan
       linkedin: https://www.linkedin.com/in/andrew-flanigan/
@@ -327,7 +304,7 @@ params:
 
   # Single pages like blog and post
   singlePages:
-    socialShare: true
+    socialShare: false
     readTime:
       enable: true
       content: "min read"
