@@ -1,6 +1,6 @@
 ---
 date: "2026-05-04T14:05:55-05:00"
-draft: true
+draft: false
 title: "Website Project"
 tags:
   - DevOps

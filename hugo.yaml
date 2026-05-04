@@ -271,7 +271,7 @@ params:
 
         featured:
           name: About
-          link: /website-project
+          link: website-project/
         badges:
           - DevOps
           - AWS
