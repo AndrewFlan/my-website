@@ -161,7 +161,7 @@ params:
     button:
       enable: true
       name: "Resume"
-      url: "/files/Site_Andrew_Flanigan_Resume.pdf"
+      url: "/files/Site_Andrew_Flanigan_Resume_1.pdf"
       download: true
       newPage: false
     socialLinks:
