@@ -5,41 +5,76 @@ on:
         branches:
             - main
 
+permissions:
+    id-token: write
+    contents: read
+
 jobs:
     deploy:
         runs-on: ubuntu-latest
 
         steps:
-            # Checks out site including the theme submodule
             - name: Checkout
               uses: actions/checkout@v6
               with:
                   submodules: recursive
                   fetch-depth: 0
 
-            # Install Hugo
             - name: Install Hugo
               uses: peaceiris/actions-hugo@v3
               with:
                   hugo-version: "0.161.1"
                   extended: true
 
-            # Build the site into public/
             - name: Build
               run: hugo --minify
 
-            # Add deploy key to SSH agent
-            - name: Setup SSH
-              run: |
-                  mkdir -p ~/.ssh
-                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy-key
-                  chmod 600 ~/.ssh/deploy-key
-                  ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+            - name: Configure AWS credentials via OIDC
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                  aws-region: us-east-1
 
-            # Copy built site to EC2
-            - name: Deploy
+            - name: Install SSM plugin
               run: |
-                  rsync -avz --delete \
-                    -e "ssh -i ~/.ssh/deploy-key -o StrictHostKeyChecking=no" \
-                    public/ \
-                    ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_TARGET_DIR }}/
+                  curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" \
+                    -o session-manager-plugin.deb
+                  sudo dpkg -i session-manager-plugin.deb
+
+            - name: Copy site files via SSM
+              run: |
+                  # Zip the built site
+                  cd public && zip -r ../site.zip . && cd ..
+
+                  # Upload zip to EC2 via SSM SendCommand
+                  COMMAND_ID=$(aws ssm send-command \
+                    --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+                    --document-name "AWS-RunShellScript" \
+                    --parameters '{"commands":["mkdir -p /tmp/site-deploy"]}' \
+                    --query "Command.CommandId" \
+                    --output text)
+
+                  # Wait for it to complete
+                  aws ssm wait command-executed \
+                    --command-id "$COMMAND_ID" \
+                    --instance-id "${{ secrets.EC2_INSTANCE_ID }}"
+
+                  # Copy files using SSM port forwarding + rsync
+                  aws ssm start-session \
+                    --target "${{ secrets.EC2_INSTANCE_ID }}" \
+                    --document-name AWS-StartSSHSession \
+                    --parameters '{"portNumber":["22"]}' &
+
+                  # Sync files directly to web root via S3 intermediate
+                  aws s3 sync public/ s3://andrewflanigan-terraform-state/site-deploy/ --delete
+
+                  # Pull from S3 on the instance
+                  aws ssm send-command \
+                    --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+                    --document-name "AWS-RunShellScript" \
+                    --parameters "{\"commands\":[
+                      \"aws s3 sync s3://andrewflanigan-terraform-state/site-deploy/ /var/www/andrewflanigan.com/ --delete\",
+                      \"aws s3 rm s3://andrewflanigan-terraform-state/site-deploy/ --recursive\"
+                    ]}" \
+                    --query "Command.CommandId" \
+                    --output text
