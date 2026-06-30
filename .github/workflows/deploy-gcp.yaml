@@ -1,0 +1,68 @@
+name: Build and Deploy (GCP)
+
+on:
+    push:
+        branches:
+            - main
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+              with:
+                  submodules: recursive
+                  fetch-depth: 0
+
+            - name: Install Hugo
+              uses: peaceiris/actions-hugo@v3
+              with:
+                  hugo-version: "0.161.0"
+                  extended: true
+
+            - name: Build
+              run: hugo --minify
+
+            - name: Authenticate to GCP via Workload Identity Federation
+              uses: google-github-actions/auth@v2
+              with:
+                  workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+                  service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+            - name: Set up gcloud
+              uses: google-github-actions/setup-gcloud@v2
+
+            - name: Sync site files to GCS staging bucket
+              run: |
+                  gcloud storage rsync public/ gs://andrewflanigan-site-deploy/site-deploy/ \
+                    --recursive \
+                    --delete-unmatched-destination-objects
+
+            - name: Pull files from GCS to web root via IAP tunnel
+              run: |
+                  COMMAND_OUTPUT=$(gcloud compute ssh ubuntu@${{ secrets.GCP_INSTANCE_NAME }} \
+                    --zone=us-central1-a \
+                    --project=${{ secrets.GCP_PROJECT_ID }} \
+                    --tunnel-through-iap \
+                    --command="
+                      gcloud storage rsync gs://andrewflanigan-site-deploy/site-deploy/ /var/www/andrewflanigan.com/ --recursive --delete-unmatched-destination-objects 2>&1
+                      echo 'Exit code: '$?
+                    " 2>&1)
+
+                  echo "$COMMAND_OUTPUT"
+
+                  # Fail the workflow if the remote command failed
+                  if echo "$COMMAND_OUTPUT" | grep -q "Exit code: [^0]"; then
+                    echo "Remote sync failed"
+                    exit 1
+                  fi
+
+            - name: Clean up GCS staging bucket
+              run: |
+                  gcloud storage rm gs://andrewflanigan-site-deploy/site-deploy/** --recursive || true
