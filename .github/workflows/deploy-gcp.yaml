@@ -57,13 +57,13 @@ jobs:
 
                   echo "$COMMAND_OUTPUT"
 
-                  if echo "$COMMAND_OUTPUT" | grep -q "Exit code: [^0]"; then
-                      echo "Remote sync failed"
+                  if echo "$COMMAND_OUTPUT" | grep -qE "^ERROR:"; then
+                      echo "gcloud compute ssh failed before reaching the remote command"
                       exit 1
                   fi
 
-                  if [ -z "$COMMAND_OUTPUT" ]; then
-                      echo "gcloud compute ssh produced no output — likely failed before reaching the remote command"
+                  if ! echo "$COMMAND_OUTPUT" | grep -q "Exit code: 0"; then
+                      echo "Remote sync did not complete successfully"
                       exit 1
                   fi
 
