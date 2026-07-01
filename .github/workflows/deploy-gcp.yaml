@@ -46,7 +46,7 @@ jobs:
 
             - name: Pull files from GCS to web root via IAP tunnel
               run: |
-                  COMMAND_OUTPUT=$(gcloud compute ssh ubuntu@${{ secrets.GCP_INSTANCE_NAME }} \
+                  COMMAND_OUTPUT=$(gcloud compute ssh ${{ secrets.GCP_INSTANCE_NAME }} \
                       --zone=us-central1-a \
                       --project=${{ secrets.GCP_PROJECT_ID }} \
                       --tunnel-through-iap \
