@@ -51,8 +51,9 @@ jobs:
                       --zone=us-central1-a \
                       --project=${{ secrets.GCP_PROJECT_ID }} \
                       --tunnel-through-iap \
+                      --ssh-flag="-t" \
                       --command="
-                      whoami 2>&1
+                      sudo gcloud storage rsync gs://andrewflanigan-site-deploy/site-deploy/ /var/www/andrewflanigan.com/ --recursive --delete-unmatched-destination-objects 2>&1
                       echo 'Exit code: '\$?
                       " 2>&1) || true
 
