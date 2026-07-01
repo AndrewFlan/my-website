@@ -186,6 +186,8 @@ params:
       items:
         - "Kubernetes"
         - "AWS"
+        - "GCP"
+        - "OCI"
         - "IaC"
         - "CI/CD"
         - "Terraform"
