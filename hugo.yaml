@@ -99,7 +99,7 @@ params:
 
   theme:
     # disableThemeToggle: true
-    # defaultTheme: "light" # dark
+    defaultTheme: "light" # dark
 
   font:
     fontSize: 1rem # default: 1rem
@@ -204,7 +204,7 @@ params:
         companyUrl: "https://www.oracle.com/"
         jobs:
           - name: "Senior Site Reliability Engineer"
-            date: "Aug 2024 - March 2026"
+            date: "Aug 2024 - June 2026"
             content: |
               - Contributed to and helped drive Kubernetes migration efforts from AWS to OCI, including cluster provisioning, configuration, management and observability.
               - Managed Kubernetes cluster lifecycle across Dev, Non-Prod, and Production environments, overseeing clusters ranging from small-scale to 250+ worker nodes, ensuring clusters remained current, stable, and compliant with Oracle security standards.
@@ -268,7 +268,7 @@ params:
     # title: "Custom Name"
     items:
       - title: Website DevOps Project
-        content: Creating a Personal Website to learn AWS and DevOps Principals such as CI/CD, IaC, etc.
+        content: Creating a Personal Website to learn AWS/GCP and DevOps Principals such as CI/CD, IaC, etc.
         image: /images/projects/profile2.jpg
 
         featured:
@@ -277,6 +277,7 @@ params:
         badges:
           - DevOps
           - AWS
+          - GCP
           - IaC
           - CI/CD
           - Terraform
